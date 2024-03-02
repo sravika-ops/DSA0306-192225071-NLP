@@ -1,0 +1,50 @@
+import nltk
+import random
+
+# Example tagged sentences for training
+training_data = [
+    [("The", "DT"), ("quick", "JJ"), ("brown", "JJ"), ("fox", "NN"), ("jumps", "VBZ"), ("over", "IN"), ("the", "DT"), ("lazy", "JJ"), ("dog", "NN")],
+    [("The", "DT"), ("lazy", "JJ"), ("dog", "NN"), ("runs", "VBZ"), ("slowly", "RB")],
+    [("A", "DT"), ("brown", "JJ"), ("cat", "NN"), ("sleeps", "VBZ"), ("soundly", "RB")]
+]
+
+# Function to train the stochastic POS tagging model
+def train_stochastic_pos_tagger(data):
+    pos_model = {}
+    for sentence in data:
+        for word, pos_tag in sentence:
+            if pos_tag not in pos_model:
+                pos_model[pos_tag] = {}
+            if word not in pos_model[pos_tag]:
+                pos_model[pos_tag][word] = 1
+            else:
+                pos_model[pos_tag][word] += 1
+    return pos_model
+
+# Function to assign POS tags using the stochastic model
+def stochastic_pos_tagger(sentence, pos_model):
+    tagged_sentence = []
+    for word in sentence:
+        if word in pos_model:
+            pos_tag_probs = pos_model[word]
+            total_count = sum(pos_tag_probs.values())
+            pos_tags = list(pos_tag_probs.keys())
+            probs = [count / total_count for count in pos_tag_probs.values()]
+            chosen_pos_tag = random.choices(pos_tags, probs)[0]
+            tagged_sentence.append((word, chosen_pos_tag))
+        else:
+            tagged_sentence.append((word, None))
+    return tagged_sentence
+
+# Train the stochastic POS tagging model
+pos_model = train_stochastic_pos_tagger(training_data)
+
+# Example sentence for POS tagging
+sentence = ["The", "quick", "brown", "cat", "runs", "slowly"]
+
+# Tag the example sentence using the stochastic model
+tagged_sentence = stochastic_pos_tagger(sentence, pos_model)
+
+# Print the tagged sentence
+print("Tagged Sentence:")
+print(tagged_sentence)
