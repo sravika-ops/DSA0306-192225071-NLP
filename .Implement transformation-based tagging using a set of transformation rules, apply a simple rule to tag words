@@ -1,0 +1,48 @@
+import nltk
+
+# Example tagged sentences for training
+training_data = [
+    [("The", "DT"), ("quick", "JJ"), ("brown", "JJ"), ("fox", "NN"), ("jumps", "VBZ"), ("over", "IN"), ("the", "DT"), ("lazy", "JJ"), ("dog", "NN")],
+    [("The", "DT"), ("lazy", "JJ"), ("dog", "NN"), ("runs", "VBZ"), ("slowly", "RB")],
+    [("A", "DT"), ("brown", "JJ"), ("cat", "NN"), ("sleeps", "VBZ"), ("soundly", "RB")]
+]
+
+# Define transformation rules
+rules = [
+    (('NN', 'VBZ'), 'NN'),          # Rule 1: If a word is followed by a verb, tag it as a noun
+    (('DT', 'JJ', 'NN'), 'NN'),     # Rule 2: If a determiner is followed by an adjective and a noun, tag the noun as NN
+    (('JJ', 'NN'), 'NN'),           # Rule 3: If an adjective is followed by a noun, tag the noun as NN
+]
+
+# Function to apply transformation rules for tagging
+def apply_rules(tokens, rules):
+    tagged_tokens = tokens[:]
+    for i in range(len(tokens)):
+        for rule in rules:
+            if i + len(rule[0]) <= len(tokens) and tuple([token[1] for token in tokens[i:i+len(rule[0])]]) == rule[0]:
+                tagged_tokens[i + len(rule[0]) - 1] = (tokens[i + len(rule[0]) - 1][0], rule[1])
+                break
+    return tagged_tokens
+
+# Train transformation-based tagging model
+def train_transform_based_tagger(training_data, rules):
+    return rules
+
+# Apply transformation-based tagging model
+def transform_based_tagging(sentence, rules):
+    tokens = [(word, None) for word in sentence]
+    tagged_tokens = apply_rules(tokens, rules)
+    return tagged_tokens
+
+# Example sentence for tagging
+sentence = ["The", "quick", "brown", "fox", "jumps", "over", "the", "lazy", "dog"]
+
+# Train transformation-based tagging model
+transform_model = train_transform_based_tagger(training_data, rules)
+
+# Apply transformation-based tagging to the example sentence
+tagged_sentence = transform_based_tagging(sentence, transform_model)
+
+# Print the tagged sentence
+print("Tagged Sentence:")
+print(tagged_sentence)
